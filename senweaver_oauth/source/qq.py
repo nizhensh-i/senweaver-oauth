@@ -92,7 +92,7 @@ class AuthQqSource(BaseAuthSource):
             
         # QQ的返回格式是URL参数格式，而不是JSON
         # 例如：access_token=YOUR_ACCESS_TOKEN&expires_in=7776000&refresh_token=YOUR_REFRESH_TOKEN
-        result = self._parse_url_response(response.text)
+        result = self._parse_url_response(response.get("content", ""))
         
         if "error" in result:
             return AuthTokenResponse(
@@ -196,7 +196,7 @@ class AuthQqSource(BaseAuthSource):
         
                     
         # QQ的返回格式是URL参数格式
-        result = self._parse_url_response(response.text)
+        result = self._parse_url_response(response.get("content", ""))
         
         if "error" in result:
             return AuthTokenResponse(
@@ -289,7 +289,7 @@ class AuthQqSource(BaseAuthSource):
             return data.get("openid", "")
         except json.JSONDecodeError:
             # 尝试解析非JSON格式的响应
-            match = re.search(r'"openid":"([^"]+)"', response.text)
+            match = re.search(r'"openid":"([^"]+)"', response.get("content", ""))
             if match:
                 return match.group(1)
             return ""
